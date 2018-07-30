@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Kata.HarryPotter
@@ -6,11 +7,35 @@ namespace Kata.HarryPotter
     [TestFixture]
     public class WhenCalculatingBookPrices
     {
+        private Book[] books;
+
+        [SetUp]
+        public void SetUp()
+        {
+            var books = new SomeBookRepository().GetAllBooks();
+        }
+
         [Test]
         public void EveryIndividualBookCostsEightEuros()
         {
-            var books = new SomeBookRepository().GetAllBooks();
             Assert.That(books.Select(book => book.Price), Is.All.EqualTo(8m));
+        }
+
+        [Test]
+        public void WithTwoDifferentBooks_FivePercentDiscountApplies()
+        {
+            var price = new PriceCalculator().Calculate(books.Take(2));
+
+            Assert.That(price, Is.EqualTo(15.2m));
+        }
+    }
+
+    public class PriceCalculator
+    {
+        public decimal Calculate(IEnumerable<Book> books)
+        {
+            var sumOfBooks = books.Sum(book => book.Price);
+            return sumOfBooks - (sumOfBooks * 0.05m);
         }
     }
 
