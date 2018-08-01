@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
@@ -7,48 +8,84 @@ namespace Kata.HarryPotter
     [TestFixture]
     public class WhenCalculatingBookPrices
     {
-        private Book[] books;
-
-        [SetUp]
-        public void SetUp()
-        {
-            var books = new SomeBookRepository().GetAllBooks();
-        }
-
         [Test]
         public void EveryIndividualBookCostsEightEuros()
         {
+            var books = HPLibrary.GetAllBooks().ToList();
             Assert.That(books.Select(book => book.Price), Is.All.EqualTo(8m));
         }
 
         [Test]
         public void WithTwoDifferentBooks_FivePercentDiscountApplies()
         {
-            var price = new PriceCalculator().Calculate(books.Take(2));
+            var books = new[] { HPLibrary.GetBookById(1), HPLibrary.GetBookById(2) };
+
+            var price = new PriceCalculator().Calculate(books.ToList());
 
             Assert.That(price, Is.EqualTo(15.2m));
+        }
+
+        [Test]
+        public void GivesRightPriceForTwoCopiesOfFirstBookAndOneOfTheSecond()
+        {
+            var books = new[]
+            {
+                HPLibrary.GetBookById(1), HPLibrary.GetBookById(1),
+                HPLibrary.GetBookById(2)
+            };
+
+            var price = new PriceCalculator().Calculate(books.ToList());
+
+            Assert.That(price, Is.EqualTo(23.2m));
         }
     }
 
     public class PriceCalculator
     {
-        public decimal Calculate(IEnumerable<Book> books)
+        public decimal Calculate(List<Book> books)
         {
-            var sumOfBooks = books.Sum(book => book.Price);
-            return sumOfBooks - (sumOfBooks * 0.05m);
+            var price = 0m;
+            var distinctBooks = books.GroupBy(b => b.Id).Select(b => b.First());
+
+            while (distinctBooks.Count() > 1)
+            {
+                foreach (var book in distinctBooks)
+                {
+                    price += book.Price - (book.Price * 0.05m);
+                    books.Remove(book);
+                }
+            }
+
+            price += books.Sum(b => b.Price);
+
+            return price;
         }
     }
 
-    public class SomeBookRepository
+    public class HPLibrary
     {
-        public Book[] GetAllBooks()
+        public static Book[] GetAllBooks()
         {
-            return new Book[] { new Book(), new Book(), new Book(), new Book(), new Book() };
+            return new Book[] { new Book(1), new Book(2),
+                                new Book(3), new Book(4),
+                                new Book(5) };
+        }
+
+        public static Book GetBookById(int id)
+        {
+            return new Book(id);
         }
     }
 
     public class Book
     {
+        public int Id { get; }
+
+        public Book(int id)
+        {
+            Id = id;
+        }
+
         public decimal Price { get; } = 8;
     }
 }
