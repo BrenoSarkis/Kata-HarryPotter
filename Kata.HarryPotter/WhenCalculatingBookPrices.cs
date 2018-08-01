@@ -69,6 +69,23 @@ namespace Kata.HarryPotter
 
             Assert.That(price, Is.EqualTo(25.6m));
         }
+
+        [Test]
+        public void GivesRightPriceForFiveDifferentBooks()
+        {
+            var books = new[]
+            {
+                HPLibrary.GetBookById(1),
+                HPLibrary.GetBookById(2),
+                HPLibrary.GetBookById(3),
+                HPLibrary.GetBookById(4),
+                HPLibrary.GetBookById(5)
+            };
+
+            var price = new PriceCalculator().Calculate(books.ToList());
+
+            Assert.That(price, Is.EqualTo(30m));
+        }
     }
 
     public class PriceCalculator
@@ -91,6 +108,9 @@ namespace Kata.HarryPotter
                         break;
                     case 4:
                         discount = 0.20m;
+                        break;
+                    case 5:
+                        discount = 0.25m;
                         break;
                 }
 
