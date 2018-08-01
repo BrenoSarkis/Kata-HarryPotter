@@ -53,6 +53,22 @@ namespace Kata.HarryPotter
 
             Assert.That(price, Is.EqualTo(21.6m));
         }
+
+        [Test]
+        public void GivesRightPriceForFourDifferentBooks()
+        {
+            var books = new[]
+            {
+                HPLibrary.GetBookById(1),
+                HPLibrary.GetBookById(2),
+                HPLibrary.GetBookById(3),
+                HPLibrary.GetBookById(4)
+            };
+
+            var price = new PriceCalculator().Calculate(books.ToList());
+
+            Assert.That(price, Is.EqualTo(25.6m));
+        }
     }
 
     public class PriceCalculator
@@ -64,7 +80,19 @@ namespace Kata.HarryPotter
 
             while (distinctBooks.Count() > 1)
             {
-                var discount = distinctBooks.Count() == 2 ? 0.05m : 0.10m;
+                var discount = 0m;
+                switch (distinctBooks.Count())
+                {
+                    case 2:
+                        discount = 0.05m;
+                        break;
+                    case 3:
+                        discount = 0.10m;
+                        break;
+                    case 4:
+                        discount = 0.20m;
+                        break;
+                }
 
                 foreach (var book in distinctBooks)
                 {
