@@ -9,10 +9,23 @@ namespace Kata.HarryPotter
     public class WhenCalculatingBookPrices
     {
         [Test]
-        public void EveryIndividualBookCostsEightEuros()
+        public void EveryIndividualBookCostsEightEuro()
         {
             var books = HPLibrary.GetAllBooks().ToList();
             Assert.That(books.Select(book => book.Price), Is.All.EqualTo(8m));
+        }
+
+        [Test]
+        public void OneBookCostsEightEuro()
+        {
+            var books = new[]
+            {
+                HPLibrary.GetBookById(1),
+            };
+
+            var price = new PriceCalculator().Calculate(books.ToList());
+
+            Assert.That(price, Is.EqualTo(8));
         }
 
         [Test]
