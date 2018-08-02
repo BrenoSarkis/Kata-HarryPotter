@@ -16,16 +16,6 @@ namespace Kata.HarryPotter
         }
 
         [Test]
-        public void WithTwoDifferentBooks_FivePercentDiscountApplies()
-        {
-            var books = new[] { HPLibrary.GetBookById(1), HPLibrary.GetBookById(2) };
-
-            var price = new PriceCalculator().Calculate(books.ToList());
-
-            Assert.That(price, Is.EqualTo(15.2m));
-        }
-
-        [Test]
         public void GivesRightPriceForTwoCopiesOfFirstBookAndOneOfTheSecond()
         {
             var books = new[]
@@ -37,6 +27,16 @@ namespace Kata.HarryPotter
             var price = new PriceCalculator().Calculate(books.ToList());
 
             Assert.That(price, Is.EqualTo(23.2m));
+        }
+
+        [Test]
+        public void GivesRightPriceForTwoDifferentBooks()
+        {
+            var books = new[] { HPLibrary.GetBookById(1), HPLibrary.GetBookById(2) };
+
+            var price = new PriceCalculator().Calculate(books.ToList());
+
+            Assert.That(price, Is.EqualTo(15.2m));
         }
 
         [Test]
@@ -85,6 +85,26 @@ namespace Kata.HarryPotter
             var price = new PriceCalculator().Calculate(books.ToList());
 
             Assert.That(price, Is.EqualTo(30m));
+        }
+
+        [Test]
+        public void GivesTheRightPriceForMultipleSets()
+        {
+            var books = new[]
+            {
+                HPLibrary.GetBookById(1),
+                HPLibrary.GetBookById(1),
+                HPLibrary.GetBookById(2),
+                HPLibrary.GetBookById(2),
+                HPLibrary.GetBookById(3),
+                HPLibrary.GetBookById(3),
+                HPLibrary.GetBookById(4),
+                HPLibrary.GetBookById(5)
+            };
+
+            var price = new PriceCalculator().Calculate(books.ToList());
+
+            Assert.That(price, Is.EqualTo(51.6));
         }
     }
 
