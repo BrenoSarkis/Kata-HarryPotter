@@ -164,8 +164,10 @@ namespace Kata.HarryPotter
     {
         public static Book[] GetAllBooks()
         {
-            return new Book[] { new Book(1), new Book(2),
-                                new Book(3), new Book(4),
+            return new Book[] { new Book(1), 
+                                new Book(2),
+                                new Book(3), 
+                                new Book(4),
                                 new Book(5) };
         }
 
